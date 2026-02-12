@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { X, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { Toaster } from "sonner";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -29,19 +30,25 @@ export default function LoginPage() {
     if (!res?.ok) {
       toast.error("Email veya şifre hatalı");
 
+      setTimeout(() => {
+        router.push("/");
+      }, 1200);
+      setEmail("");
+      setPassword("");
       return;
     }
 
-    // Session'ı yenilemek için küçük bekleme
+    // Session refresh
     const sessionRes = await fetch("/api/auth/session");
     const session = await sessionRes.json();
 
     if (session?.user?.role === "admin") {
       router.push("/dashboard");
     } else {
-      toast.error("Dashboard erişim yetkiniz yok");
-
-      router.push("/");
+      setTimeout(() => {
+        router.push("/");
+        toast.error("Dashboard erişim yetkiniz yok");
+      }, 1200);
     }
   }
 
@@ -52,7 +59,7 @@ export default function LoginPage() {
         <div className="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
         <div className="absolute -bottom-24 right-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
       </div>
-
+      <Toaster position="top-right" expand richColors closeButton />
       <div className="relative w-full max-w-md">
         <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-xl">
           {/* Kapatma */}
