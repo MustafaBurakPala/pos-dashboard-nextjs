@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
 import Product from "@/lib/models/Product";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -11,6 +12,7 @@ export async function POST(req: Request) {
   }
 
   try {
+    await requireAdmin();
     await dbConnect();
 
     const body = await req.json();

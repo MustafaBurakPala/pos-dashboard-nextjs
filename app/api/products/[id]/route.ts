@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
 import Product from "@/lib/models/Product";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 export async function DELETE(
   req: Request,
   context: { params: Promise<{ id: string }> },
 ) {
   try {
+    await requireAdmin();
     await dbConnect();
 
     const { id } = await context.params;
