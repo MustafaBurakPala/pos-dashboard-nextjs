@@ -4,6 +4,7 @@ import Product from "@/lib/models/Product";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { requireAdmin } from "@/lib/requireAdmin";
+import { createAuditLog } from "@/lib/audit";
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -18,6 +19,14 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const product = await Product.create(body);
+    await createAuditLog({
+      user: session.user,
+      action: "CREATE",
+      entity: "Product",
+      entityId: product._id.toString(),
+      metadata: { name: product.name },
+      req,
+    });
 
     return NextResponse.json(product, { status: 201 });
   } catch (err) {
