@@ -4,7 +4,6 @@ import Product from "@/lib/models/Product";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createAuditLog } from "@/lib/audit";
-import { formatDate } from "@/lib/utils/formatDate";
 
 export async function DELETE(
   req: Request,
@@ -38,7 +37,6 @@ export async function DELETE(
     req,
   });
 
-  formatDate(log.createdAt);
   return NextResponse.json({ success: true });
 }
 
